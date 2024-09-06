@@ -1,0 +1,46 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: fe23k
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: banzai
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: banzai
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: eu-north-1
+  deploymentMethod: direct
+
+functions:
+  GetRooms:
+    handler: functions/GetRooms/index.handler
+    events:
+      - httpApi:
+          path: /rooms
+          method: get
+
+resources:
+  Resources:
+    bonzaiRooms:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: bonzaiRooms
+        AttributeDefinitions:
+          - AttributeName: roomType
+            AttributeType: S
+        KeySchema:
+          - AttributeName: roomType
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    bonzaiOrders:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: bonzaiOrders
+        AttributeDefinitions:
+          - AttributeName: orderID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: orderID
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

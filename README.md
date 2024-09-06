@@ -1,21 +1,21 @@
-# GRUPPEXAMINATION CRISIS AVERTED:
+# **GRUPPEXAMINATION CRISIS AVERTED:**
 
 <br>
 
-**KURS**:
+### **KURS:**
 
-_"Utveckling & driftsättning i molnmiljö"_
+_"Utveckling & driftsättning i molnmiljö."_
 
 <br>
 
-**GRUPPMEDLEMMAR**:
+### **GRUPPMEDLEMMAR:**
 
 Magnus, Sandra Anton och Daniel.
 
 <br>
 <br>
 
-## SETUP:
+## **SETUP:**
 
 <br>
 
@@ -42,13 +42,11 @@ role: arnAdressenTillDinRollSomHarLambdaOchDynamoDbAccess
 <br>
 <br>
 
-## Förklaring:
+## **Förklaring:**
 
 <br>
 
-Din "serverless.yml" har redan sökvägarna till "personal.yml" men det funkar såhär:
-
-"custom" är en reserverad property i serverless. Här kan man spara properties som man själv bestämmer namnet på. I det här fallet har en property namnet secrets och håller sökvägen till en fil som håller properties med personlig information.
+Din "serverless.yml" har redan sökvägarna till "personal.yml" men det fungerar såhär:
 
 ```
 custom:
@@ -57,7 +55,12 @@ custom:
 
 <br>
 
-Ett exempel på hur du stegar sökvägen till en property i "personal.yml", i det här fallet org.
+"custom" är en reserverad property i serverless. I den kan man spara properties som man själv bestämmer namnet på.<br>
+I det här fallet har en property namnet secrets och håller sökvägen till en fil som håller properties med personlig information.
+
+<br>
+
+Ett exempel på hur du stegar sökvägen till en property i "personal.yml", i det här fallet org:
 
 ```
 org: ${self:custom.secrets.org}

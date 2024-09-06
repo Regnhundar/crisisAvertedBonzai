@@ -1,5 +1,5 @@
 # "org" ensures this Service is used with the correct Serverless Framework Access Key.
-org: fe23k
+org: ${self:custom.secrets.org}
 # "app" enables Serverless Framework Dashboard features and sharing them with other Services.
 app: banzai
 # "service" is the name of this project. This will also be added to your AWS resource names.
@@ -10,6 +10,11 @@ provider:
   runtime: nodejs20.x
   region: eu-north-1
   deploymentMethod: direct
+  iam:
+    role: ${self:custom.secrets.role}
+
+custom:
+  secrets: ${file(./personal.yml)}
 
 functions:
   GetRooms:

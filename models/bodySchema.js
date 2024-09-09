@@ -94,14 +94,14 @@ const updateOrderSchema = Joi.object({
 
 // Dummy data och hur man använder scheman i funktionerna.
 
-const data = {};
+// const data = {};
 
-const { error } = updateOrderSchema.validate(data);
+// const { error } = updateOrderSchema.validate(data);
 
-if (error) {
-    console.log("Validation error:", error.details[0].message);
+// if (error) {
+//     console.log("Validation error:", error.details[0].message);
 
-    // return sendError(400, error.details[0].message);
-}
+//     // return sendError(400, error.details[0].message);
+// }
 
 export { orderSchema, updateOrderSchema };

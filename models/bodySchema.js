@@ -84,6 +84,7 @@ const updateOrderSchema = Joi.object({
     .or("guests", "single", "double", "suite", "arrival", "departure")
     .messages({
         "object.missing": "At least one of 'guests', 'single', 'double', 'suite', 'arrival', 'departure' must be provided.",
+        "object.min": "Must include at least one property",
     })
     .min(1)
     .unknown(false)
@@ -93,12 +94,9 @@ const updateOrderSchema = Joi.object({
 
 // Dummy data och hur man använder scheman i funktionerna.
 
-// const data = {
-//     guests: 1,
-//     name: "beans",
-// };
+// const data = {};
 
-// const { error } = orderSchema.validate(data);
+// const { error } = updateOrderSchema.validate(data);
 
 // if (error) {
 //     console.log("Validation error:", error.details[0].message);

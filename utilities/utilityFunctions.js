@@ -1,4 +1,4 @@
-import db from "../../services/db.js";
+import db from "../services/db.js";
 const bizLogic = (body, itemToUpdate) => {
     const error = new Error();
 
@@ -23,53 +23,59 @@ const bizLogic = (body, itemToUpdate) => {
     return costOfStay;
 };
 
-const updateAvailability = async (rooms, oldItem) => {
+const attemptReservation = async (rooms) => {
     let freeSingleRooms;
     let freeDoubleRooms;
     let freeSuiteRooms;
 
-    const error = new Error();
-
     if (rooms.single && rooms.single > 0) {
-        const singleRooms = await db.get({
-            TableName: "bonzaiRooms",
-            Key: {
-                roomType: "single",
-            },
-        });
-
-        freeSingleRooms = singleRooms.Item.available;
-        if (rooms.single > freeSingleRooms) {
-            error.message = `You are trying to book ${rooms.single} rooms but there are only ${freeSingleRooms} availiable`;
-            throw error;
-        }
+        freeSingleRooms = await checkRoomsAvailability("single", rooms.single);
     }
     if (rooms.double && rooms.double > 0) {
-        const doubleRooms = await db.get({
-            TableName: "bonzaiRooms",
-            Key: {
-                roomType: "double",
-            },
-        });
-        freeDoubleRooms = doubleRooms.Item.available;
-        if (rooms.single > freeDoubleRooms) {
-            error.message = `You are trying to book ${rooms.double} rooms but there are only ${freeDoubleRooms} availiable`;
-            throw error;
-        }
+        freeDoubleRooms = await checkRoomsAvailability("double", rooms.double);
     }
-
-    if (rooms.suite) {
-        const suiteRooms = await db.get({
-            TableName: "bonzaiRooms",
-            Key: {
-                roomType: "suite",
-            },
-        });
-        freeSuiteRooms = suiteRooms.Item.available;
-        if (rooms.single > freeSuiteRooms) {
-            error.message = `You are trying to book ${rooms.suite} rooms but there are only ${freeSuiteRooms} availiable`;
-            throw error;
-        }
+    if (rooms.suite && rooms.suite > 0) {
+        freeSuiteRooms = await checkRoomsAvailability("suite", rooms.suite);
+    }
+    if (freeSingleRooms) {
+        await reserveRooms("single", freeSingleRooms, rooms.single);
+    }
+    if (freeDoubleRooms) {
+        await reserveRooms("double", freeDoubleRooms, rooms.double);
+    }
+    if (freeSuiteRooms) {
+        await reserveRooms("suite", freeSuiteRooms, rooms.suite);
     }
 };
-export { bizLogic };
+
+const checkRoomsAvailability = async (roomType, orderAmount) => {
+    const checkRoom = await db.get({
+        TableName: "bonzaiRooms",
+        Key: {
+            roomType: `${roomType}`,
+        },
+    });
+
+    const freeRoomtypeAmount = checkRoom.Item.available;
+
+    if (freeRoomtypeAmount < orderAmount) {
+        throw new Error(`You are trying to book ${orderAmount} ${roomType} rooms but ${freeRoomtypeAmount} are available.`);
+    }
+    return freeRoomtypeAmount;
+};
+
+const reserveRooms = async (roomType, availableAmount, orderAmount) => {
+    await db.update({
+        TableName: "bonzaiRooms",
+        Key: {
+            roomType: `${roomType}`,
+        },
+        UpdateExpression: "SET available = :available",
+        ExpressionAttributeValues: {
+            ":available": availableAmount - orderAmount,
+        },
+        ReturnValues: "ALL_NEW",
+    });
+};
+
+export { bizLogic, attemptReservation };

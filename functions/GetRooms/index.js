@@ -7,7 +7,7 @@ export const handler = async (event) => {
             TableName: 'bonzaiRooms',
         });
         if (Items) {
-            return sendResponse(200, { roomTypes: Items });
+            return sendResponse(200, { Items });
         } else {
             return sendError(404, { success: false, message: 'Rooms not found!' });
         }

@@ -1,69 +1,67 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in NodeJS'
-description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v4
-platform: AWS
-language: nodeJS
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, Inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# **GRUPPEXAMINATION CRISIS AVERTED:**
 
-# Serverless Framework Node HTTP API on AWS
+<br>
 
-This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
+### **KURS:**
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
+_"Utveckling & driftsättning i molnmiljö."_
 
-## Usage
+<br>
 
-### Deployment
+### **GRUPPMEDLEMMAR:**
 
-In order to deploy the example, you need to run the following command:
+Magnus, Sandra Anton och Daniel.
 
-```
-serverless deploy
-```
+<br>
+<br>
 
-After running deploy, you should see output similar to:
+## **SETUP:**
+
+<br>
+
+> [!IMPORTANT]  
+> **För att projektet ska fungera behöver du göra 2 saker:**
+
+<br>
+
+**På samma fil-nivå som serverless.yml skapa en fil med namn:**
 
 ```
-Deploying "serverless-http-api" to stage "dev" (us-east-1)
-
-✔ Service deployed to stack serverless-http-api-dev (91s)
-
-endpoint: GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-functions:
-  hello: serverless-http-api-dev-hello (1.6 kB)
+personal.yml
 ```
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [HTTP API (API Gateway V2) event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api).
+<br>
 
-### Invocation
-
-After successful deployment, you can call the created application via HTTP:
+**I den behöver du två properties:**
 
 ```
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
+org: dittOrganisationsNamn
+role: arnAdressenTillDinRollSomHarLambdaOchDynamoDbAccess
 ```
 
-Which should result in response similar to:
+<br>
+<br>
 
-```json
-{ "message": "Go Serverless v4! Your function executed successfully!" }
+## **Förklaring:**
+
+<br>
+
+Din "serverless.yml" har redan sökvägarna till "personal.yml" men det fungerar såhär:
+
+```
+custom:
+  secrets: ${file(./personal.yml)}
 ```
 
-### Local development
+<br>
 
-The easiest way to develop and test your function is to use the `dev` command:
+"custom" är en reserverad property i serverless. I den kan man spara properties som man själv bestämmer namnet på.<br>
+I det här fallet har en property namnet secrets och håller sökvägen till en fil som håller properties med personlig information.
+
+<br>
+
+Ett exempel på hur du stegar sökvägen till en property i "personal.yml", i det här fallet org:
 
 ```
-serverless dev
+org: ${self:custom.secrets.org}
 ```
-
-This will start a local emulator of AWS Lambda and tunnel your requests to and from AWS Lambda, allowing you to interact with your function as if it were running in the cloud.
-
-Now you can invoke the function as before, but this time the function will be executed locally. Now you can develop your function locally, invoke it, and see the results immediately without having to re-deploy.
-
-When you are done developing, don't forget to run `serverless deploy` to deploy the function to the cloud.

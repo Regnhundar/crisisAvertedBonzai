@@ -46,4 +46,58 @@ const orderSchema = Joi.object({
         "object.unknown": "Unknown properties are not allowed.",
     });
 
-export { orderSchema };
+const updateOrderSchema = Joi.object({
+    guests: Joi.number().integer().min(1).max(36).strict().optional().messages({
+        "number.base": "'guests' must be a number",
+        "number.integer": "'guests' can't have decimals",
+        "number.min": "'guests' must be at least 1",
+        "number.max": "'guests' must be at most 36",
+    }),
+    single: Joi.number().integer().max(8).strict().optional().messages({
+        "number.base": "'single' must be a number",
+        "number.integer": "'single' can't have decimals",
+        "number.max": "'single' must be at most 8",
+    }),
+    double: Joi.number().integer().max(8).strict().optional().messages({
+        "number.base": "'double' must be a number",
+        "number.integer": "'double' can't have decimals",
+        "number.max": "'double' must be at most 8",
+    }),
+    suite: Joi.number().integer().max(4).strict().optional().messages({
+        "number.base": "'suite' must be a number",
+        "number.integer": "'suite' can't have decimals",
+        "number.max": "'suite' must be at most 4",
+    }),
+    arrival: Joi.date().iso().optional().messages({
+        "date.base": "'arrival' must be a valid date.",
+    }),
+    departure: Joi.date().iso().greater(Joi.ref("arrival")).optional().messages({
+        "date.base": "'departure' must be a valid date.",
+        "date.greater": "'departure' date must be greater than 'arrival' date.",
+        "any.required": "'departure' date is required.",
+    }),
+})
+    .or("guests", "single", "double", "suite", "arrival", "departure")
+    .messages({
+        "object.missing": "At least one of 'guests', 'single', 'double', 'suite', 'arrival', 'departure' must be provided.",
+    })
+    .unknown(false)
+    .messages({
+        "object.unknown": "Unknown properties are not allowed.",
+    });
+
+// Dummy data och hur man använder scheman i funktionerna.
+
+// const data = {
+//     guests: 1,
+// };
+
+// const { error } = updateOrderSchema.validate(data);
+
+// if (error) {
+//     console.log(data);
+
+//     // return sendError(400, error.details[0].message);
+// }
+
+export { orderSchema, updateOrderSchema };

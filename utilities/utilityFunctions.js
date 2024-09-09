@@ -4,8 +4,8 @@ const bizLogic = (body, itemToUpdate) => {
     const numberOfBeds = body.single + body.double * 2 + body.suite * 3;
 
     if (body.guests > numberOfBeds) {
-        error.msg = "Guests can't be a higher number then beds.";
-        throw error.msg;
+        error.message = "Guests can't be a higher number then beds.";
+        throw error;
     }
 
     const singlePrice = 500 * body.single;

@@ -9,22 +9,26 @@ const orderSchema = Joi.object({
         "string.email": "'email' must be a valid email address",
         "any.required": "'email' is required",
     }),
-    guests: Joi.number().min(1).max(36).strict().required().messages({
+    guests: Joi.number().integer().min(1).max(36).strict().required().messages({
         "number.base": "'guests' must be a number",
+        "number.integer": "'guests' can't have decimals",
         "number.min": "'guests' must at least be 1",
         "number.max": "'guests' can't be higher than 36",
         "any.required": "'guests' is required",
     }),
-    single: Joi.number().max(8).strict().messages({
+    single: Joi.number().integer().max(8).strict().messages({
         "number.base": "'single' must be a number",
+        "number.integer": "'single' can't have decimals",
         "number.max": "'single' can't be higher than 8",
     }),
-    double: Joi.number().max(8).strict().messages({
+    double: Joi.number().integer().max(8).strict().messages({
         "number.base": "'double' must be a number",
+        "number.integer": "'double' can't have decimals",
         "number.max": "'double' can't be higher than 8",
     }),
-    suite: Joi.number().max(4).strict().messages({
+    suite: Joi.number().integer().max(4).strict().messages({
         "number.base": "'suite' must be a number",
+        "number.integer": "'suite' can't have decimals",
         "number.max": "'suite' can't be higher than 4",
     }),
     arrival: Joi.date().required().messages({
@@ -81,6 +85,7 @@ const updateOrderSchema = Joi.object({
     .messages({
         "object.missing": "At least one of 'guests', 'single', 'double', 'suite', 'arrival', 'departure' must be provided.",
     })
+    .min(1)
     .unknown(false)
     .messages({
         "object.unknown": "Unknown properties are not allowed.",
@@ -90,12 +95,13 @@ const updateOrderSchema = Joi.object({
 
 // const data = {
 //     guests: 1,
+//     name: "beans",
 // };
 
-// const { error } = updateOrderSchema.validate(data);
+// const { error } = orderSchema.validate(data);
 
 // if (error) {
-//     console.log(data);
+//     console.log("Validation error:", error.details[0].message);
 
 //     // return sendError(400, error.details[0].message);
 // }

@@ -1,12 +1,64 @@
 import { orderSchema } from "../../models/bodySchema.js";
 import { sendResponse, sendError } from "../../responses/responses.js";
 import db from "../../services/db.js";
+import { v4 as uuid } from 'uuid';
+import { bizLogic } from "../../utilities/utilityFunctions.js";
 
 export const handler = async (event) => {
-    return {
-        statusCode: 200,
-        body: JSON.stringify({
-            message: "POST ORDER",
-        }),
-    };
+    try {
+        // Parsa och destrukturera body
+        const body = JSON.parse(event.body);
+        const { name, email, guests, single, double, suite, arrival, departure } = body;
+
+        const { error } = orderSchema.validate(body);
+        if (error) {
+            return sendError(400, error.details[0].message);
+        }
+
+        // Generara ett orderID
+        const orderID = uuid().substring(0, 8);
+
+        const price = bizLogic({ 
+            guests, 
+            single, 
+            double, 
+            suite, 
+            arrival, 
+            departure 
+        })
+
+        const orderData = {
+            orderID,
+            name,
+            email,
+            guests,
+            single,
+            double,
+            suite,
+            price, 
+            arrival,
+            departure,
+        };
+
+        await db.put({
+            TableName : 'bonzaiOrders',
+            Item : orderData,
+        });
+        
+        return sendResponse(200, {
+            success : true,
+            bookingNumber : orderID,
+            guests,
+            rooms : {
+                single, double, suite,
+            },
+            totalAmount : price,
+            arrival : arrival,
+            departure : departure,
+            guestName : name,
+        });
+
+    } catch (error) {
+        return sendError(400, error.message)
+    }
 };

@@ -25,7 +25,7 @@ export const handler = async (event) => {
             suite, 
             arrival, 
             departure 
-        })
+        });
 
         const orderData = {
             orderID,

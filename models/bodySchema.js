@@ -16,17 +16,17 @@ const orderSchema = Joi.object({
         "number.max": "'guests' can't be higher than 36",
         "any.required": "'guests' is required",
     }),
-    single: Joi.number().integer().max(8).strict().messages({
+    single: Joi.number().integer().max(8).strict().optional().messages({
         "number.base": "'single' must be a number",
         "number.integer": "'single' can't have decimals",
         "number.max": "'single' can't be higher than 8",
     }),
-    double: Joi.number().integer().max(8).strict().messages({
+    double: Joi.number().integer().max(8).strict().optional().messages({
         "number.base": "'double' must be a number",
         "number.integer": "'double' can't have decimals",
         "number.max": "'double' can't be higher than 8",
     }),
-    suite: Joi.number().integer().max(4).strict().messages({
+    suite: Joi.number().integer().max(4).strict().optional().messages({
         "number.base": "'suite' must be a number",
         "number.integer": "'suite' can't have decimals",
         "number.max": "'suite' can't be higher than 4",
@@ -41,10 +41,6 @@ const orderSchema = Joi.object({
         "any.required": "'departure' date is required.",
     }),
 })
-    .or("single", "double", "suite")
-    .messages({
-        "object.missing": "At least one of 'single', 'double', or 'suite' must be provided.",
-    })
     .unknown(false)
     .messages({
         "object.unknown": "Unknown properties are not allowed.",

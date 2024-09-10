@@ -18,10 +18,9 @@ export const handler = async (event) => {
             return sendError(400, error.details[0].message);
         }
 
-        // Generara ett orderID
-
         await attemptReservation({ guests, single, double, suite });
 
+        // Generara ett orderID
         const orderID = uuid().substring(0, 8);
 
         const price = calculatePrice({

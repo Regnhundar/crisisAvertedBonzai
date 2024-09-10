@@ -1,14 +1,6 @@
 import db from "../services/db.js";
-const bizLogic = (body, itemToUpdate) => {
-    const error = new Error();
 
-    const numberOfBeds = body.single + body.double * 2 + body.suite * 3;
-
-    if (body.guests > numberOfBeds) {
-        error.message = "Guests can't be a higher number then beds.";
-        throw error;
-    }
-
+const calculatePrice = (body) => {
     const singlePrice = 500 * body.single;
     const doublePrice = 1000 * body.double;
     const suitePrice = 1500 * body.suite;
@@ -23,32 +15,41 @@ const bizLogic = (body, itemToUpdate) => {
     return costOfStay;
 };
 
-const attemptReservation = async (rooms) => {
+const attemptReservation = async (body, oldOrder) => {
+    checkAmountOfBeds(body);
+
     let freeSingleRooms;
     let freeDoubleRooms;
     let freeSuiteRooms;
 
-    if (rooms.single && rooms.single > 0) {
-        freeSingleRooms = await checkRoomsAvailability("single", rooms.single);
+    if (body.single && body.single > 0) {
+        freeSingleRooms = await checkRoomsAvailability("single", body.single, oldOrder ? oldOrder.single : undefined);
     }
-    if (rooms.double && rooms.double > 0) {
-        freeDoubleRooms = await checkRoomsAvailability("double", rooms.double);
+    if (body.double && body.double > 0) {
+        freeDoubleRooms = await checkRoomsAvailability("double", body.double, oldOrder ? oldOrder.double : undefined);
     }
-    if (rooms.suite && rooms.suite > 0) {
-        freeSuiteRooms = await checkRoomsAvailability("suite", rooms.suite);
+    if (body.suite && body.suite > 0) {
+        freeSuiteRooms = await checkRoomsAvailability("suite", body.suite, oldOrder ? oldOrder.suite : undefined);
     }
     if (freeSingleRooms) {
-        await reserveRooms("single", freeSingleRooms, rooms.single);
+        await reserveRooms("single", freeSingleRooms, body.single);
     }
     if (freeDoubleRooms) {
-        await reserveRooms("double", freeDoubleRooms, rooms.double);
+        await reserveRooms("double", freeDoubleRooms, body.double);
     }
     if (freeSuiteRooms) {
-        await reserveRooms("suite", freeSuiteRooms, rooms.suite);
+        await reserveRooms("suite", freeSuiteRooms, body.suite);
     }
 };
 
-const checkRoomsAvailability = async (roomType, orderAmount) => {
+const checkAmountOfBeds = (body) => {
+    let numberOfBeds = body.single + body.double * 2 + body.suite * 3;
+    if (body.guests > numberOfBeds) {
+        throw new Error("Guests can't be a higher number then beds.");
+    }
+};
+
+const checkRoomsAvailability = async (roomType, orderAmount, oldOrder) => {
     const checkRoom = await db.get({
         TableName: "bonzaiRooms",
         Key: {
@@ -56,8 +57,11 @@ const checkRoomsAvailability = async (roomType, orderAmount) => {
         },
     });
 
-    const freeRoomtypeAmount = checkRoom.Item.available;
+    let freeRoomtypeAmount = checkRoom.Item.available;
 
+    if (oldOrder && !isNaN(oldOrder)) {
+        freeRoomtypeAmount += oldOrder;
+    }
     if (freeRoomtypeAmount < orderAmount) {
         throw new Error(`You are trying to book ${orderAmount} ${roomType} rooms but ${freeRoomtypeAmount} are available.`);
     }
@@ -78,4 +82,4 @@ const reserveRooms = async (roomType, availableAmount, orderAmount) => {
     });
 };
 
-export { bizLogic, attemptReservation };
+export { calculatePrice, attemptReservation };

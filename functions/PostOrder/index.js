@@ -2,7 +2,7 @@ import { orderSchema } from "../../models/bodySchema.js";
 import { sendResponse, sendError } from "../../responses/responses.js";
 import db from "../../services/db.js";
 import { v4 as uuid } from "uuid";
-import { bizLogic, attemptReservation } from "../../utilities/utilityFunctions.js";
+import { calculatePrice, attemptReservation } from "../../utilities/utilityFunctions.js";
 
 export const handler = async (event) => {
     try {
@@ -19,10 +19,12 @@ export const handler = async (event) => {
         }
 
         // Generara ett orderID
+
+        await attemptReservation({ guests, single, double, suite });
+
         const orderID = uuid().substring(0, 8);
-        await attemptReservation({ single, double, suite });
-        const price = bizLogic({
-            guests,
+
+        const price = calculatePrice({
             single,
             double,
             suite,

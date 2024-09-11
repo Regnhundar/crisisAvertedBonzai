@@ -20,7 +20,7 @@ Magnus, Sandra Anton och Daniel.
 <br>
 
 > [!IMPORTANT]  
-> **För att projektet ska fungera behöver du göra 2 saker:**
+> **För att projektet ska fungera behöver du skapa en personal.yml**
 
 <br>
 
@@ -64,4 +64,96 @@ Ett exempel på hur du stegar sökvägen till en property i "personal.yml", i de
 
 ```
 org: ${self:custom.secrets.org}
+```
+
+# **API anrop:**
+
+<br>
+
+Vid en serverless deploy av projektet så returneras flera URL för alla våra anrop.
+Använd de med t.ex. Insomnia eller Postman (vi använder Insomnia) för att göra saker som hämta, skicka in eller uppdatera data. Strukturen för alla URL:er som vi använder ser ut som nedan.
+
+<br>
+
+För vissa anrop kan det behövas skickas med JSON-data i request body, se nedan bild för vart man skall ange data:
+
+![Add JSON](img/JSONimg.png)
+
+## POST - Skapa hotellrummen
+
+När du startar upp projektet saknas rum i tabellen "bonzaiRooms".
+<br>
+<br>
+För att få in hotellets olika typer av rum gör du ett POST-anrop.
+
+```
+https://ErsättDennaURLMedDinURL/rooms
+```
+
+## GET - Hämta alla rum
+
+För att hämta alla rum:
+
+```
+https://ErsättDennaURLMedDinURL/rooms
+```
+
+## GET - Hämta alla order
+
+För att hämta alla order:
+
+```
+https://ErsättDennaURLMedDinURL/orders
+```
+
+## POST - Lägg en order
+
+För att lägga en order
+
+```
+https://ErsättDennaURLMedDinURL/orders
+```
+
+För att skicka en order mot detta anrop så skall detta skickas in: (Detta är exempeldata)
+
+```
+{
+	"name" : "TestOrder", {#Required#}
+	"email" : "mail@test.com", {#Required#}
+	"guests" : 4, {#Required#}
+	"single" : 2, {#Optional#}
+	"double" : 1, {#Optional#}
+	"suite" : 0, {#Optional#}
+	"arrival" : "2024-09-11", {#Required#}
+	"departure" : "2024-09-12"{#Required#}
+}
+```
+
+## PUT - Uppdatera en order
+
+För att uppdatera en order. Här byter du ut {orderID} i din URL mot det åttasiffriga orderID som din order har, då utan '{ }' klammor.
+
+```
+https://ErsättDennaURLMedDinURL/orders/{orderID}
+```
+
+För att uppdatera en order mot detta anrop så skall detta skickas in: (Detta är exempeldata)
+
+```
+{
+	"guests" : 4, {#Optional#}
+	"single" : 2, {#Optional#}
+	"double" : 1, {#Optional#}
+	"suite" : 0, {#Optional#}
+	"arrival" : "2024-09-11", {#Optional#}
+	"departure" : "2024-09-12"{#Optional#}
+}
+```
+
+## DELETE - Radera en order
+
+För att radera en order. Här byter du ut {orderID} i din URL mot det åttasiffriga orderID som din order har, då utan '{ }' klammor.
+
+```
+https://ErsättDennaURLMedDinURL/orders/{orderID}
 ```

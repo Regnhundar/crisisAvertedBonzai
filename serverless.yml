@@ -6,46 +6,76 @@ app: banzai
 service: banzai
 
 provider:
-  name: aws
-  runtime: nodejs20.x
-  region: eu-north-1
-  deploymentMethod: direct
-  iam:
-    role: ${self:custom.secrets.role}
+    name: aws
+    runtime: nodejs20.x
+    region: eu-north-1
+    deploymentMethod: direct
+    iam:
+        role: ${self:custom.secrets.role}
 
 custom:
-  secrets: ${file(./personal.yml)}
+    secrets: ${file(./personal.yml)}
 
 functions:
-  GetRooms:
-    handler: functions/GetRooms/index.handler
-    events:
-      - httpApi:
-          path: /rooms
-          method: get
+    CreateRooms:
+        handler: functions/CreateRooms/index.handler
+        events:
+            - httpApi:
+                  path: /rooms
+                  method: post
+    GetRooms:
+        handler: functions/GetRooms/index.handler
+        events:
+            - httpApi:
+                  path: /rooms
+                  method: get
+    GetOrders:
+        handler: functions/GetOrders/index.handler
+        events:
+            - httpApi:
+                  path: /orders
+                  method: get
 
+    PostOrder:
+        handler: functions/PostOrder/index.handler
+        events:
+            - httpApi:
+                  path: /orders
+                  method: post
+    UpdateOrder:
+        handler: functions/UpdateOrder/index.handler
+        events:
+            - httpApi:
+                  path: /orders/{orderID}
+                  method: put
+    DeleteOrder:
+        handler: functions/DeleteOrder/index.handler
+        events:
+            - httpApi:
+                  path: /orders/{orderID}
+                  method: delete
 resources:
-  Resources:
-    bonzaiRooms:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: bonzaiRooms
-        AttributeDefinitions:
-          - AttributeName: roomType
-            AttributeType: S
-        KeySchema:
-          - AttributeName: roomType
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
+    Resources:
+        bonzaiRooms:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: bonzaiRooms
+                AttributeDefinitions:
+                    - AttributeName: roomType
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: roomType
+                      KeyType: HASH
+                BillingMode: PAY_PER_REQUEST
 
-    bonzaiOrders:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: bonzaiOrders
-        AttributeDefinitions:
-          - AttributeName: orderID
-            AttributeType: S
-        KeySchema:
-          - AttributeName: orderID
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
+        bonzaiOrders:
+            Type: AWS::DynamoDB::Table
+            Properties:
+                TableName: bonzaiOrders
+                AttributeDefinitions:
+                    - AttributeName: orderID
+                      AttributeType: S
+                KeySchema:
+                    - AttributeName: orderID
+                      KeyType: HASH
+                BillingMode: PAY_PER_REQUEST

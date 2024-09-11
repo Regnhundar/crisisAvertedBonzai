@@ -17,6 +17,12 @@ custom:
     secrets: ${file(./personal.yml)}
 
 functions:
+    CreateRooms:
+        handler: functions/CreateRooms/index.handler
+        events:
+            - httpApi:
+                  path: /rooms
+                  method: post
     GetRooms:
         handler: functions/GetRooms/index.handler
         events:

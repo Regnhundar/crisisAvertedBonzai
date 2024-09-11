@@ -1,5 +1,5 @@
 import Joi from "joi";
-
+// Validerings-schemat som används när en beställning läggs.
 const orderSchema = Joi.object({
     name: Joi.string().required().messages({
         "string.base": "'name' must be a string",
@@ -8,7 +8,7 @@ const orderSchema = Joi.object({
     email: Joi.string().email().required().messages({
         "string.email": "'email' must be a valid email address",
         "any.required": "'email' is required",
-    }),
+    }), // integer = heltal, inga decimaler
     guests: Joi.number().integer().min(1).max(36).strict().required().messages({
         "number.base": "'guests' must be a number",
         "number.integer": "'guests' can't have decimals",
@@ -41,11 +41,11 @@ const orderSchema = Joi.object({
         "any.required": "'departure' date is required.",
     }),
 })
-    .unknown(false)
+    .unknown(false) // Tillåter ENBART fördefinierade properties.
     .messages({
         "object.unknown": "Unknown properties are not allowed.",
     });
-
+// Schema som skall användas till uppdatering. Ej klart.
 const updateOrderSchema = Joi.object({
     guests: Joi.number().integer().min(1).max(36).strict().optional().messages({
         "number.base": "'guests' must be a number",
